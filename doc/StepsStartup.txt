@@ -1,0 +1,11 @@
+1)chip memory maps 
+2)chip vector table : indicate that this table do not should be in the .data section (__attribute__)
+3)define sections
+4)compiler doc
+5)create func init .bss .data
+6)call main()
+
+alias and handler Default_Handler() to prevent creating 60 handlers
+Copy .data in SRAM.
+Init .bss in SRAM.
+import boundaries information from linker script : _edata _sdata _etext

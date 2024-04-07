@@ -10,13 +10,16 @@ LD = $(PREFIX)ld
 OBJCOPY = $(PREFIX)objcopy
 SIZE = $(PREFIX)size
 
-# Define the source files and object files
-SRCS = Main.c stm32_startup_f103x.c
-OBJS = $(SRCS:.c=.o)
+# Define the source directory
+SRC_DIR = .
 
-# Define compiler and linker flags
-CFLAGS = -c -mcpu=cortex-m4 -Wall -O0 -gdwarf
-LDFLAGS = -T STM32F407VGTx_FLASH.ld -nostdlib -Map=main.map
+# Define the lib directory
+LIB_DIR = $(SRC_DIR)/lib
+
+# Define the source files and object files
+SRCS = main.c stm32_startup_f103x.c
+LIB_SRCS = $(wildcard $(LIB_DIR)/*.c)
+OBJS = $(SRCS:.c=.o)
 
 # Define the target name
 TARGET = main
@@ -24,17 +27,17 @@ TARGET = main
 # Default target to build the hex file
 all: $(TARGET).hex
 
-# Default target to build the hex file
+# Convert ELF binary to Intel HEX format
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
 # Link the object files into an ELF binary
-$(TARGET).elf: $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $@
+$(TARGET).elf: $(OBJS) $(LIB_SRCS:.c=.o)
+	$(LD) -T STM32F407VGTx_FLASH.ld -nostdlib -Map=main.map $^ -o $@
 
 # Compile C source files into object files
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -c -mcpu=cortex-m4 -Wall -O0 -gdwarf -I$(SRC_DIR) -I$(LIB_DIR) $< -o $@
 
 # Clean up generated files
 clean:
@@ -46,5 +49,5 @@ size:
 
 # Copy files to a specific location (TRACE32 directory)
 copy:
-	cp C:\Users\mmefteh\Desktop\BareMetalApp\$(TARGET).elf C:\TRACE32_R_2023_02_000159199\files\demo\arm\hardware\stm32\stm32f4\stm32f4discovery\sieve
-	cp C:\Users\mmefteh\Desktop\BareMetalApp\$(SRCS) C:\TRACE32_R_2023_02_000159199\files\demo\arm\hardware\stm32\stm32f4\stm32f4discovery\sieve
+	cp $(TARGET).elf /path/to/destination/$(TARGET).elf
+	cp $(SRCS) $(LIB_SRCS) /path/to/destination/

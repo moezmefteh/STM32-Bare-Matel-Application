@@ -1,72 +1,58 @@
-/*******************************************************
- * File: main.c
- * Author: Moez Mefteh
- * Date: 09/06/2023
- * Description: C code for controlling LEDs using GPIO pins
- *              and reading input from a button using GPIO.
- ********************************************************/
+/*
+ * led.c
+ *
+ * author: Moez Mefteh
+ * description:
+ *    Blinks 4 on-board LED at roughly 1 second intervals.
+ *    system clock is running from HSI which is 16 Mhz.
+ *    Delay function is just a simple counter so is not
+ *    accurate and the delay time will change based on the
+ *    optimization flags.
+ *
+ * gpio setup steps:
+ *   There are at least three steps associated with GPIO:
+ *   1. enable GPIOx clock from RCC
+ *   2. set the direction of the pins from MODER (input / output)
+ *   3. (optional) set the speed of the pins from OSPEEDR
+ *   4. (optional) set pins to pull-up or pull-down or
+ *         leave them floating from PUPDR
+ *   5. (optional) set output type register to push-pull or
+ *         open-drain from OTYPER
+ *   6. either read from IDR or write to ODR depending on
+ *         input or output configuration
+ */
 
-// Include necessary header files
-#define LED_PIN_1 12
-#define LED_PIN_2 13
-#define LED_PIN_3 14
-#define LED_PIN_4 15
-#define BUTTON 0
+#include "led.h"
 
-// Function to introduce a delay
-void delay(unsigned int count) {
-    while (count--) {
-        __asm__("nop");
-    }
-}
+// create a led delay. Just a rough estimate
+// for one second delay
+#define SLOWDELAY    0x3fffff
+#define FASTDELAY    0xfffff
 
-// Function to initialize GPIO pins
-void GPIO_Init(void) {
+/*************************************************
+* function declarations
+*************************************************/
+int main(void);
 
-    volatile unsigned int *RCC_AHB1ENR = (volatile unsigned int *)0x40023830;
-    // Enable clock for GPIO D
-    *RCC_AHB1ENR |= (1 << 3);
-
-    // Enable clock for GPIO A
-    *RCC_AHB1ENR |= (1 << 0);
-
-    // Configure LED pin as output
-    volatile unsigned int *GPIOD_MODER = (volatile unsigned int *)0x40020C00;
-    *GPIOD_MODER |= (1 << (LED_PIN_1 * 2));
-    *GPIOD_MODER |= (1 << (LED_PIN_2 * 2));
-    *GPIOD_MODER |= (1 << (LED_PIN_3 * 2));
-    *GPIOD_MODER |= (1 << (LED_PIN_4 * 2));
-
-    // Configure BUTTON pin as input
-    volatile unsigned int *GPIOA_MODER = (volatile unsigned int*)0x40020000;
-    *GPIOA_MODER &= ~BUTTON;
-}
-
-// Function to initialize GPIO pins
-void GPIO_TogglePin() {
-    volatile unsigned int *GPIOD_ODR = (volatile unsigned int *)0x40020C14;
-    *GPIOD_ODR ^= (1 << LED_PIN_1);
-    *GPIOD_ODR ^= (1 << LED_PIN_2);
-    *GPIOD_ODR ^= (1 << LED_PIN_3);
-    *GPIOD_ODR ^= (1 << LED_PIN_4);
-}
-
-int main(void) {
+/*************************************************
+* main code starts from here
+*************************************************/
+int main(void)
+{
     // Initialize GPIO
-    GPIO_Init();
-
-    while (1) {
-        // Read button input
-        volatile unsigned int *GPIOA_IDR = (volatile unsigned int*)0x40020010;
+    init_led();
+    init_button();
+    // the code should never leave its master loop, hence while(1) or for(;;)
+    while(1)
+    {
         // Implement delay based on button state
-        if (!(*GPIOA_IDR & (1 << BUTTON))) {
-            delay(0x3fffff);    // Delay when the button is released
+        if (!read_button()) {
+            nop_delay(SLOWDELAY);    // Delay when the button is released
         } else {
-            delay(0xfffff);     // Delay when the button is pressed
+            nop_delay(FASTDELAY);     // Delay when the button is pressed
         }
         // Toggle LED pins
-        GPIO_TogglePin();
-
-
+        led_toggle();
     }
+    return 0;
 }

@@ -1,13 +1,11 @@
 /*
- * led.c
+ * main.c
  *
  * author: Moez Mefteh
  * description:
- *    Blinks 4 on-board LED at roughly 1 second intervals.
+ *    Blinks 4 on-board LED based on the button status.
  *    system clock is running from HSI which is 16 Mhz.
- *    Delay function is just a simple counter so is not
- *    accurate and the delay time will change based on the
- *    optimization flags.
+ *    Delay function is just a simple nop sequence.
  *
  * gpio setup steps:
  *   There are at least three steps associated with GPIO:
@@ -24,8 +22,6 @@
 
 #include "led.h"
 
-// create a led delay. Just a rough estimate
-// for one second delay
 #define SLOWDELAY    0x3fffff
 #define FASTDELAY    0xfffff
 
@@ -45,8 +41,8 @@ int main(void)
     // the code should never leave its master loop, hence while(1) or for(;;)
     while(1)
     {
-        // Implement delay based on button state
-        if (!read_button()) {
+        // Set delay based on button state
+        if(!read_button()) {
             nop_delay(SLOWDELAY);    // Delay when the button is released
         } else {
             nop_delay(FASTDELAY);     // Delay when the button is pressed

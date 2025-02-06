@@ -15,14 +15,19 @@ SRC_DIR = .
 
 # Define the lib directory
 LIB_DIR = $(SRC_DIR)/lib
+#LIB_DIR = $(SRC_DIR)/lib1
 
 # Define the source files and object files
-SRCS = main.c stm32_startup_f103x.c
+#SRCS = Main0.c stm32_startup_f103x.c
+SRCS = Main.c stm32_startup_f103x.c
+#SRCS = Main1.c stm32_startup_f103x.c
+
 LIB_SRCS = $(wildcard $(LIB_DIR)/*.c)
 OBJS = $(SRCS:.c=.o)
 
 # Define the target name
 TARGET = main
+#TARGET = main1
 
 # Default target to build the hex file
 all: $(TARGET).hex

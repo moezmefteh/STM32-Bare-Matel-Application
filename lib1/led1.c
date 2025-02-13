@@ -54,7 +54,7 @@ void led_toggle(void)
 
 unsigned int read_button(void)
 {
-    return (GPIOD->IDR & (1 << BUTTON));
+    return (GPIOA->IDR & (1 << BUTTON));
 }
 // Function to introduce a delay
 void nop_delay(unsigned int count) {

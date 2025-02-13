@@ -1,6 +1,8 @@
 #ifndef __LED1_H__
 #define __LED1_H__
 
+#include <stdint.h>
+
 #define PERIPH_BASE             (0x40000000UL)
 #define AHB1PERIPH_OFFSET       (0x00020000UL)
 #define AHB1PERIPH_BASE         (PERIPH_BASE + AHB1PERIPH_OFFSET)

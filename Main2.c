@@ -22,8 +22,8 @@
 
 #include "led.h"
 
-#define SLOWDELAY    0x3fffff
-#define FASTDELAY    0xfffff
+#define SLOWDELAY    0x3ffff
+#define FASTDELAY    0xffff
 
 /*************************************************
 * function declarations

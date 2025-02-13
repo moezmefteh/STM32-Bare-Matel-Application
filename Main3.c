@@ -22,7 +22,7 @@
 
 #include "led1.h"
 
-#define SLOWDELAY    0x3fffff
+#define SLOWDELAY    0x3ffff
 #define FASTDELAY    0xfffff
 
 /*************************************************

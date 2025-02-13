@@ -60,13 +60,11 @@ int main(void) {
         volatile unsigned int *GPIOA_IDR = (volatile unsigned int*)0x40020010;
         // Implement delay based on button state
         if (!(*GPIOA_IDR & (1 << BUTTON))) {
-            delay(0x3fffff);    // Delay when the button is released
+            delay(0x3ffff);    // Delay when the button is released
         } else {
-            delay(0xfffff);     // Delay when the button is pressed
+            delay(0xffff);     // Delay when the button is pressed
         }
         // Toggle LED pins
         GPIO_TogglePin();
-
-
     }
 }
